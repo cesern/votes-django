@@ -1,0 +1,222 @@
+{% extends "base/baseIn.html" %}
+
+{% block title %}Votaciones{% endblock %}
+
+{% block headss %} 
+    {% load staticfiles %}
+    <!-- Bootstrap core CSS-->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
+    <link href="{% static 'css/buttons.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Inicio</li>
+            <li class="breadcrumb-item active">Votaciones disponibles</li>
+        </ol>
+        <div class="row">
+            {% if encuestas %}
+            <!--Si hay encuestas disponibles--> 
+            <div class="col-12">
+                <div class="row">
+                    {% for encuesta in encuestas %}
+                    <div class="col-md-8 offset-md-2">
+                    <!-- <div class="col-md-6"> -->    
+                        <div class="card mb-3">    
+                            <div class="card-header">
+                                <i class="fa fa-pencil-square"></i> {{ encuesta.tema }}</div>
+                                <div class="card-body">
+                                    {% if encuesta.fecha_de_inicio > fecha %}
+                                    <!-- si aun no inicia la votacion -->
+                                        <div class="form-group">
+                                            <label>{{ encuesta.pregunta }}</label>
+                                            <br><br>
+                                            <center>
+                                                <div class="mr-5">La votación aún no inicia.</div>
+                                            </center>
+                                            <hr>
+                                            <div class="mr-5">Fecha de inicio: {{ encuesta.fecha_de_inicio }}</div>
+                                        </div>
+                                    {% elif encuesta.fecha_de_cierre > fecha %}
+                                    <!-- en proceso de votación -->
+                                        {% if votos %}
+                                        <!--Aqui es si el usuario ha votado en alguna encuesta--> 
+                                            {% if encuesta.id in votos %}
+                                                <!--si ya voto en la encuesta-->
+                                                <div class="form-group">
+                                                    <label>{{ encuesta.pregunta }}</label>
+                                                    <br><br>
+                                                    <center>
+                                                        <!-- <div class="mr-5">Ya participó en esta votación</div> -->
+                                                        <div class="mr-5">Gracias por participar, su voto ha sido registrado</div>
+                                                    </center>
+                                                    <hr>
+                                                    <div class="mr-5">Fecha de cierre: {{ encuesta.fecha_de_cierre }}</div>
+                                                </div>
+                                            {% else %}
+                                                <!--si no ha votado en la encuesta-->
+                                                <form action="{% url 'votings:vote' encuesta.id %}" method="post">{% csrf_token %}
+                                                    <div class="form-group">
+                                                        <label>{{ encuesta.pregunta }}</label>
+                                                        <br><br>
+                                                        {% for respuesta in respuestas %}
+                                                            {% if encuesta.id == respuesta.votacion_id %}
+                                                            <div class="radio">
+                                                                <label>
+                                                                    <input type="radio" name="choice" id="choice{{respuesta.id}}" value="{{respuesta.id}}"> {{ respuesta.respuesta }}
+                                                                </label>
+                                                            </div>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        <center>
+                                                            <input type="submit" class="btn button-caution" value="Votar" ali>
+                                                        </center>
+                                                        <hr>
+                                                        <div class="mr-5">Fecha de inicio: {{ encuesta.fecha_de_inicio }}</div>
+                                                        <hr>
+                                                        <div class="mr-5">Fecha de cierre: {{ encuesta.fecha_de_cierre }}</div>
+                                                    </div>
+                                                </form>
+                                            {% endif %}
+                                        {% else %}  
+                                            <!--Aqui es si no hay ninguna votacion del usuario-->    
+                                            <form action="{% url 'votings:vote' encuesta.id %}" method="post">{% csrf_token %}
+                                                <div class="form-group">
+                                                    <label>{{ encuesta.pregunta }}</label>
+                                                    <br><br>
+                                                    {% for respuesta in respuestas %}
+                                                        {% if encuesta.id == respuesta.votacion_id %}
+                                                        <div class="radio">
+                                                            <label>
+                                                                <input type="radio" name="choice" id="choice{{respuesta.id}}" value="{{respuesta.id}}"> {{ respuesta.respuesta }}
+                                                            </label>
+                                                        </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    <center>
+                                                        <input type="submit" class="btn button-caution" value="Votar" ali>
+                                                    </center>
+                                                    <hr>
+                                                    <div class="mr-5">Fecha de inicio: {{ encuesta.fecha_de_inicio }}</div>
+                                                    <hr>
+                                                    <div class="mr-5">Fecha de cierre: {{ encuesta.fecha_de_cierre }}</div>
+                                                </div>
+                                            </form>
+                                        {% endif %}   
+                                    {% else %}
+                                    <!-- si ya paso la votacion -->
+                                    <div class="form-group">
+                                        <label>{{ encuesta.pregunta }}</label>
+                                        <br><br>
+                                        <center>
+                                            <div class="mr-5">La votación ha concluido.</div>
+                                        </center>
+                                        <hr>
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <div class="col-md-8 offset-md-2">
+                                                    <center>
+                                                        <div class="mr-5">Resultados de la votación en línea (prueba piloto)</div>
+                                                    </center>
+                                                    <br>
+                                                    <table class="table table-bordered table-striped">
+                                                        <thead>
+                                                        <tr class="text-center">
+                                                            <th>Opción</th>
+                                                            <th>Votos</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {% for resultado in resultados %}
+                                                                {% if resultado.votacion_id == encuesta.id %}
+                                                                    <tr>
+                                                                        <td>{{ resultado.respuesta }}</th>
+                                                                        <td class="text-center">{{ resultado.votos }}</td>
+                                                                    </tr>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>    
+                                        <hr>
+                                        <div class="mr-5">La votación terminó el {{ encuesta.fecha_de_cierre }}</div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            <div class="card-footer small text-muted"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+                <!--
+                {% if show2 == True %}
+                    <div id="voteModal" tabindex="-1" role="dialog" class="modal">
+                        <div role="document" class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title">Aviso</h5>
+                            <button type="button" data-dismiss="modal" aria-label="Close" class="close"></button><span aria-hidden="true">×</span>
+                            </div>
+                            <div class="modal-body">
+                            <p>Bienvenidos a la consulta "Plebiscito STAUS sobre la problemática del ISSSTESON".
+                                Este tipo de consulta (Vía electrónica) está en periodo de prueba, por lo tanto, no será considerada para este proceso.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button data-dismiss='modal' class="btn btn-primary">Aceptar</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                {% endif %}
+                -->
+            {% else %}
+            <!--Si no hay encuestas--> 
+                <div id="voteModal" tabindex="-1" role="dialog" class="modal">
+                    <div role="document" class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title">Aviso</h5>
+                        <button type="button" data-dismiss="modal" aria-label="Close" class="close"></button><span aria-hidden="true">×</span>
+                        </div>
+                        <div class="modal-body">
+                        <p>No hay votaciones</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button data-dismiss='modal' class="btn btn-primary">Aceptar</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block bodyss %}
+    {% load staticfiles %}
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.j' %}s"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin.min.js' %}"></script>
+    <script src="{% static 'js/buttons.js' %}"></script>
+    <!--
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            $('#voteModal').modal('show')
+        });
+    </script>
+    -->
+{% endblock %}

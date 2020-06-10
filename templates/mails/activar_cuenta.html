@@ -1,0 +1,9 @@
+{% autoescape off %}
+    Hola {{ user.first_name }} {{ user.last_name }},
+    
+    Ya has creado tu cuenta, haz clic en el siguiente enlace para activarla:
+    
+    https://{{ domain }}{% url 'users:activate' uidb64=uid token=token %}
+    
+    Gracias por registrarte!
+{% endautoescape %}

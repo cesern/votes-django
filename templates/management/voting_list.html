@@ -1,0 +1,90 @@
+{% extends "base/baseInAdmin.html" %}
+
+{% block title %}Lista de votaciones{% endblock %}
+
+{% block headss %} 
+    {% load staticfiles %}
+    <!-- Bootstrap core CSS-->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/datatables/dataTables.bootstrap4.css' %}" rel="stylesheet">
+    <link href="{% static 'css/buttons.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Lista de votaciones</li>
+            <li class="breadcrumb-item active">Lista</li>
+        </ol>
+        <div class="card mb-3">
+            <div class="card-header">
+            <i class="fa fa-fw fa-table"></i>Lista de votaciones</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Tema</th>
+                                <th>Fecha de inicio</th>
+                                <th>Fecha de cierre</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for voting in votings %}
+                                <tr>
+                                    <td>{{voting.tema}}</td>
+                                    <td>{{voting.fecha_de_inicio_str}}</td>
+                                    <td>{{voting.fecha_de_cierre_str}}</td>
+                                    {% if fecha > voting.fecha_de_cierre %}
+                                        <td>
+                                            <form id="form{{voting.id}}" action="{% url 'management:voting_results' voting.id %}" method="POST">{% csrf_token %}
+                                                <button type="button" class="btn btn-success pdf {{voting.id}}">Resultado</button>
+                                            </form>
+                                        </td>
+                                    {% else %}
+                                        <td>
+                                            <button type="button" class="btn btn-success" title="La votación aun no se ha cerrado" disabled>Resultado</button>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
+
+{% block bodyss %}
+    {% load staticfiles %}
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.j' %}s"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    <!-- Page level plugin JavaScript-->
+    <script src="{% static 'vendor/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.js' %}"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin.min.js' %}"></script>
+    <!-- Custom scripts for this page-->
+    <script src="{% static 'js/sb-admin-datatables.min.js' %}"></script>
+    <script>
+        $('#dataTable').DataTable({
+            responsive: true,
+            "order": [[ 1, "desc" ]]
+        });
+    </script>
+    <script src="{% static 'js/pdf/pdfmake.min.js' %}"></script>
+    <script src="{% static 'js/pdf/vfs_fonts.js' %}"></script>
+    <script src="{% static 'js/pdf/results.js' %}"></script>
+{% endblock %}

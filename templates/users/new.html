@@ -1,0 +1,172 @@
+{% extends 'base/baseOut.html' %}
+{% block title %}Registro{% endblock %}
+
+{% block headss %} 
+    {% load staticfiles %}
+    <!-- Bootstrap core CSS-->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Custom fonts for this template--> 
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
+    <link href="{% static 'css/buttons.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <!-- Breadcrumbs-->
+    <div class="card card-register mx-auto mt-5">
+        <div class="card-header" align="center">
+            <img src="{% static 'images/logoNombre.png' %}" width="247" height="91" alt="STAUS" alin>
+        </div>
+        <div class="card-header" align="center">
+            Registrarse
+        </div>
+        <div class="card-body">
+            <form method="post">{% csrf_token %}
+
+                {% if msg %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ msg }}
+                    </div>
+                {% endif %}
+                {% if form.errors %}
+                {% for key, value in form.errors.items %}
+                        <div class="alert alert-danger" role="alert">
+                            {{value}}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if user%}
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <label for="first_name">Nombres</label>
+                                <input type="text" value="{{ user.first_name }}" name="first_name" class="form-control" placeholder="Por ejemplo: Cesar Ernesto" required="" maxlength="30" id="id_first_name">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name">Apellidos</label>
+                                <input type="text" value="{{ user.last_name }}" name="last_name" class="form-control" placeholder="Por ejemplo: Salazar Buelna" required="" maxlength="150" id="id_last_name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-12">
+                                <label for="delegacion">Delegación</label>
+                                <select class="form-control" name="delegacion" id="station">
+                                    {% for d in d_names %}
+                                        {% if d == user.delegacion %}
+                                            <option selected>{{ d }}</option>
+                                        {% else %}
+                                            <option>{{ d }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <label for="username">Número de empleado</label>
+                                <input type="text" value="{{ user.username }}" name="username" class="form-control" placeholder="Por ejemplo: 12345" required="" maxlength="150" autofocus="" id="id_username">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email">Correo Institucional</label>
+                                <input type="email" value="{{ user.email }}" name="email" pattern="[a-z0-9._-]+@([a-z0-9_-]+\.)*(uson\.|unison\.|staus\.)([a-z0-9_-]+\.)*[a-z]{2,4}$" class="form-control" placeholder="Por ejemplo: abcdef@mat.uson.mx" required="" maxlength="254" id="id_email">
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <label for="{{form.first_name.name}}">Nombres</label>
+                                {{form.first_name}}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{form.last_name.name}}">Apellidos</label>
+                                {{form.last_name}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-12">
+                                <label for="delegacion">Delegación</label>
+                                <select class="form-control" name="delegacion" id="station">
+                                    {% for d in d_names %}
+                                        <option>{{ d }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <label for="{{form.username.name}}">Número de empleado</label>
+                                {{form.username}}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{form.email.name}}">Correo Institucional</label>
+                                {{form.email}}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <label for="{{form.password1.name}}">Contraseña</label>
+                                <input class="form-control" placeholder="" name="password1" type="password" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{form.password2.name}}">Confirmar contraseña</label>
+                                <input class="form-control" placeholder="" name="password2" type="password" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                <input type="submit" class="btn button-caution btn-block" value="Registrar">
+            </form>
+            <div class="text-center">
+                    <a class="d-block small mt-3" href="{% url 'users:login' %}">¿Ya tienes cuenta?</a>
+                </div>
+        </div>
+    </div>
+    {% if activate == True %}
+        <div id="registroModal" tabindex="-1" role="dialog" class="modal">
+            <div role="document" class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Registro</h5>
+                <button type="button" data-dismiss="modal" aria-label="Close" class="close"></button><span aria-hidden="true">×</span>
+                </div>
+                <div class="modal-body">
+                <p>Para completar el registro, se enviara un enlace de verificación a su correo.</p>
+                </div>
+                <div class="modal-footer"><a href="{% url 'users:login' %}" class="btn btn-primary">Aceptar</a></div>
+            </div>
+            </div>
+        </div>
+    {% endif %}
+    
+{% endblock %}
+
+{% block bodyss %}
+    {% load staticfiles %}
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin.min.js' %}"></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            $('#registroModal').modal('show')
+        });
+    </script>
+{% endblock %}

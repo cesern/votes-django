@@ -1,0 +1,127 @@
+{% extends "base/baseInAdmin.html" %}
+
+{% block title %}Lista de usuarios{% endblock %}
+
+{% block headss %} 
+    {% load staticfiles %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Lista de usuarios</li>
+            <li class="breadcrumb-item active">Lista</li>
+        </ol>
+        <div class="card mb-3">
+            <div class="card-header">
+            <i class="fa fa-fw fa-table"></i>Lista de usuarios</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Delegación</th>
+                                <th>Número de empleado</th>
+                                <th>Nombre</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                {% if user.is_active == True %}
+                                    <tr>
+                                        <td>{{user.delegacion}}</td>
+                                        <td>{{user.numero_de_empleado}}</td>
+                                        <td>{{user.nombre_completo}}</td>
+                                        <td>
+                                            <a href="#" data-toggle="modal" data-target="#desactivateModal{{user.user_id}}" class="btn btn-danger">Desactivar</a>
+                                        </td>
+                                    </tr>
+                                    <div id="desactivateModal{{user.user_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade">
+                                        <div role="document" class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post" action="{% url 'management:deactivate' user.user_id %}">{% csrf_token %}
+                                                    <div class="modal-header">
+                                                        <h5 id="exampleModalLabel" class="modal-title">Desactivar usuario</h5>
+                                                        <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                        <p>Nota: Debe escribir las razones por las cual el usuario no puede votar en linea.</p>
+                                                        <label for="correccion" class="col-form-label">Razones:</label>
+                                                        <textarea name="razon" rows="4" class="form-control" required></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                                                        <button data-dismiss='modal' class="btn btn-secondary">Cancelar</button>
+                                                    </div>  
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <tr>
+                                        <td>{{user.delegacion}}</td>
+                                        <td>{{user.numero_de_empleado}}</td>
+                                        <td>{{user.nombre_completo}}</td>
+                                        <td>
+                                            <a href="#" data-toggle="modal" data-target="#activateModal{{user.user_id}}" class="btn btn-danger">Activar</a>
+                                        </td>
+                                    </tr>
+                                    <div id="activateModal{{user.user_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade">
+                                        <div role="document" class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post" action="{% url 'management:activate' user.user_id %}">{% csrf_token %}
+                                                    
+                                                    <div class="modal-header">
+                                                        <h5 id="exampleModalLabel" class="modal-title">Activar usuario</h5>
+                                                        <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                        <p>¿Esta seguro que quiere activar al usuario?</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                                                        <button data-dismiss='modal' class="btn btn-secondary">Cancelar</button>
+                                                    </div>  
+                                                </form> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
+
+{% block bodyss %}
+    {% load staticfiles %}
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.j' %}s"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    <!-- Page level plugin JavaScript-->
+    <script src="{% static 'vendor/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.js' %}"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin.min.js' %}"></script>
+    <!-- Custom scripts for this page-->
+    <script src="{% static 'js/sb-admin-datatables.min.js' %}"></script>
+    <script>
+        $('#dataTable').DataTable({
+            responsive: true,
+            "order": [[ 0, "asc" ]]
+        });
+    </script>
+{% endblock %}

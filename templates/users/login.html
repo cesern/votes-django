@@ -1,0 +1,97 @@
+{% extends 'base/baseOut.html' %}
+{% block title %}Inicio de Sesión{% endblock %}
+
+{% block headss %} 
+    {% load staticfiles %}
+    <!-- Bootstrap core CSS-->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Custom fonts for this template--> 
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
+    <link href="{% static 'css/buttons.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <!-- Breadcrumbs-->
+    <div class="card card-login mx-auto mt-5">
+        <div class="card-header" align="center">
+            <img src="{% static 'images/logoNombre.png' %}" width="247" height="91" alt="STAUS" alin>
+        </div>
+        <div class="card-header" align="center">
+            Iniciar Sesión
+        </div>
+        <div class="card-body">
+            <form method="post">{% csrf_token %}
+                
+                {% if messages %}
+                    {% for message in messages  %}
+                    {% if message.tags == 'error' %} 
+                    <div class="alert alert-danger" role="alert">
+                        Usuario o contraseña incorrectos.
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                {% if user %}
+                    <div class="form-group">
+                        <label for="{{form.username.name}}">Número de empleado</label>
+                        <input name="username" value="{{ user.username }}" class="form-control" placeholder="Por ejemplo: 12345" required="" id="id_username">
+                    </div>
+                {% else %}
+                    <div class="form-group">
+                        <label for="{{form.username.name}}">Número de empleado</label>
+                        <input name="username" class="form-control" placeholder="Por ejemplo: 12345" required="" id="id_username">
+                    </div>
+                {% endif %}
+
+                    <div class="form-group">
+                        <label for="{{form.password.name}}">Contraseña</label>
+                        {{form.password}}
+                    </div>
+                <input type="submit" class="btn button-caution btn-block" value="Ingresar">
+            </form>
+            <div class="text-center">
+                <a class="d-block small mt-3" href="{% url 'users:new' %}">Registrarse</a>
+                <a class="d-block small" href="{% url 'users:password_reset' %}">¿Olvidaste tu contraseña?</a>
+            </div>
+        </div>
+        {% if show == True %}
+            <div id="loginModal" tabindex="-1" role="dialog" class="modal">
+                <div role="document" class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title">Aviso</h5>
+                    <button type="button" data-dismiss="modal" aria-label="Close" class="close"></button><span aria-hidden="true">×</span>
+                    </div>
+                    <div class="modal-body">
+                    <p>Bienvenidos al sistema electrónico de consulta del STAUS.
+                        Para poder participar debe de estar registrado en el sistema. Puede registrarse en el siguiente enlace: <a href="{% url 'users:new' %}">Registrarse</a> </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button data-dismiss='modal' class="btn btn-primary">Aceptar</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block bodyss %}
+    {% load staticfiles %}
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin.min.js' %}"></script>
+    <script src="{% static 'js/buttons.js' %}"></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            $('#loginModal').modal('show')
+        });
+    </script>
+{% endblock %}

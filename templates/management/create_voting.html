@@ -1,0 +1,146 @@
+{% extends "base/baseInAdmin.html" %}
+
+{% block title %}Crear votacion{% endblock %}
+
+{% block headss %} 
+    {% load staticfiles %}
+    <!-- Bootstrap core CSS-->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
+    <link href="{% static 'css/buttons.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Votación</li>
+            <li class="breadcrumb-item active">Crear</li>
+        </ol>
+        
+        <!-- Breadcrumbs-->
+        <div class="card card-register mx-auto mt-5">
+            <div class="card-header" align="center">
+                <img src="{% static 'images/logoNombre.png' %}" width="247" height="91" alt="STAUS" alin>
+            </div>
+            <div class="card-header" align="center">
+                Crear votación
+            </div>
+            <div class="card-body">
+                <form method="post">{% csrf_token %}
+                    
+                    {% if tipo == 0 %}    
+                        <div class="alert alert-danger" role="alert">
+                            La fecha de inicio no puede ser antes que la fecha actual.
+                        </div>
+                    {% elif tipo == 1 %}
+                        <div class="alert alert-danger" role="alert">
+                            La fecha de cierre no puede ser antes que la fecha de inicio.
+                        </div>
+                    {% endif %}
+
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            Nota: Si la votación sera para todas las delegaciones, 
+                            seleccionar la opción "TODAS".
+                        </div>
+                      </div>
+
+                    <div class="form-group">
+                        <label for="delegacion">Delegación</label>
+                        <select class="form-control" name="delegacion" id="station">
+                            {% for d in d_names %}
+                                {% if d == user.delegacion %}
+                                    <option selected>{{ d }}</option>
+                                {% else %}
+                                    <option>{{ d }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tema">Tema</label>
+                        <input class="form-control" type="text" name="tema" placeholder="El tema es..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pregunta">Pregunta</label>
+                        <input class="form-control" type="text" name="pregunta" placeholder="¿La pregunta es?" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="delegacion">Número de opciones</label>
+                            <select id="num_op" class="form-control">
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                    </div>
+
+                    <div id="respuestas">
+                        <div class="form-group">
+                            <label for="respuesta1">Opcion 1</label>
+                            <!-- <input class="form-control" type="text" name="op1" required> -->
+                            <textarea class="form-control" rows="3" name="op1" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="respuesta2">Opcion 2</label>
+                            <!-- <input class="form-control" type="text" name="op2" required> -->
+                            <textarea class="form-control" rows="3" name="op2" required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <label for="fecha_de_inicio">Fecha de inicio</label>
+                                <input id="date1" class="form-control" type="date" name="fecha_de_inicio" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="hora_de_inicio">Hora de inicio</label>
+                                <input class="form-control" type="time" name="hora_de_inicio" value="13:00" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <label for="fecha_de_cierre">Fecha de cierre</label>
+                                <input id="date2" class="form-control" type="date" name="fecha_de_cierre" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="hora_de_cierre">Hora de cierre</label>
+                                <input class="form-control" type="time" name="hora_de_cierre" value="14:00" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="submit" class="btn button-caution btn-block" value="Crear">
+                </form>
+            </div>
+        </div>
+        
+    </div>
+
+{% endblock %}
+
+{% block bodyss %}
+    {% load staticfiles %}
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.j' %}s"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin.min.js' %}"></script>
+    <script src="{% static 'js/fechas/date_start.js' %}"></script>
+    <script src="{% static 'js/respuestas/cambiar_respuestas.js' %}"></script>
+{% endblock %}

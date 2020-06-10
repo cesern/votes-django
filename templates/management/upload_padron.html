@@ -1,0 +1,64 @@
+{% extends "base/baseInAdmin.html" %}
+
+{% block title %}Subir padrón{% endblock %}
+
+{% block headss %} 
+    {% load staticfiles %}
+    <!-- Bootstrap core CSS-->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
+    <link href="{% static 'css/buttons.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <!-- Breadcrumbs-->
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">Padrón</li>
+        <li class="breadcrumb-item active">Subir Padrón</li>
+    </ol>
+    <div class="card card-login mx-auto mt-5">
+        <div class="card-header">Subir padrón</div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                {% if messages %}
+                    {% for message in messages  %}
+                        {% if message.tags == 'error' %} 
+                        <div class="alert alert-danger" role="alert">
+                            {{ message }}
+                        </div>
+                        {% endif %}
+                        {% if message.tags == 'success' %} 
+                        <div class="alert alert-success" role="alert">
+                            {{ message }}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <div class="form-group" >
+                    <label for="csv_file">Archivo CSV</label>
+                    <input type="file" name="csv_file" class="form-control" required>
+                </div>
+                <input type="submit" class="btn button-caution btn-block" value="Subir">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block bodyss %}
+    {% load staticfiles %}
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.j' %}s"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin.min.js' %}"></script>
+{% endblock %}
